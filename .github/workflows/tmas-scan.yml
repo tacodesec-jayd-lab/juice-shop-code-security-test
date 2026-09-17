@@ -1,0 +1,32 @@
+name: TMAS Scan
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  tmas-scan:
+    name: TMAS Repo Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: juice-shop-code-security-test
+
+      - name: Scan repository with Trend Vision One TMAS
+        uses: trendmicro/tmas-scan-action@v3.1.3
+        with:
+          version: '2'
+          vulnerabilitiesScan: true
+          malwareScan: false
+          secretsScan: true
+          artifact: dir:./juice-shop-code-security-test
+          additionalArgs: --region=us-east-1
+          tmasApiKey: ${{ secrets.TMAS_API_KEY }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
